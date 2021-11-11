@@ -10,23 +10,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  *
  * @author jairo
  */
-public class ArchivoCarrera {
+public class ArchivoCarreraTexto implements IArchivo {
     private File archivo;
     private FileWriter aEscritura;
     private Scanner aLectura;
 
-    public ArchivoCarrera() {
+    public ArchivoCarreraTexto() {
         this.archivo = new File("ClasificacionF1.dat");
     }
     
-    public ArchivoCarrera(String name){
+    public ArchivoCarreraTexto(String name){
         this.archivo = new File(name);
     }
 
@@ -82,7 +81,66 @@ public class ArchivoCarrera {
         return c;
     }
     
-    public List<Competidor> leer(){
+    @Override
+    public Competidor eliminar(String cc) throws IOException {
+        
+        List<Competidor> listadoInicial =  this.leer();
+        ArchivoCarreraTexto archivoAux = new ArchivoCarreraTexto("ArchvivoTmpF1.dat");
+        Competidor eliminado = null;
+        for(Competidor f: listadoInicial){
+            if(f.getCc().equals(cc)){ // elemento a eliminar
+                eliminado = f;
+            }
+            else{
+                archivoAux.escribir(f);
+            }
+        }
+        
+        if(this.archivo.delete()){
+            if(archivoAux.getArchivo().exists()){
+                if(!archivoAux.getArchivo().renameTo(this.archivo)){
+                    throw new IOException("El archivo temporal no pudo ser renombrado");
+                }
+
+            }
+            else
+               this.archivo.createNewFile();
+        }
+        else{
+            throw new IOException("El archivo original no pudo ser elimiando");
+        }
+            
+        
+        
+        return eliminado;
+    }
+    
+    @Override
+    public Competidor buscar(String cc) throws IOException{
+        Competidor buscado = null;
+        try {
+            this.aLectura = new Scanner(this.archivo);
+            while(this.aLectura.hasNext()){
+                String linea[] = this.aLectura.nextLine().split(";");
+                Competidor c = this.leerCompetidor(linea);
+                if(c.getCc().equals(cc)){
+                    buscado = c;
+                    break;
+                }
+            }
+            return buscado;
+            
+        } catch (FileNotFoundException ex) {
+                throw new IOException("EL archivo no se encuentra o no pueder ser leido");
+        }
+        finally{
+            if(this.aLectura!=null)
+                this.aLectura.close();
+        }
+    }
+    
+    @Override
+    public List<Competidor> leer() throws IOException{
        List<Competidor> lista = null;
         try {
             
@@ -93,11 +151,11 @@ public class ArchivoCarrera {
                 Competidor c = this.leerCompetidor(linea);
                 lista.add(c);
             }
+            
             return lista;
             
         } catch (FileNotFoundException ex) {
-                System.out.println("EL archivo no se encuentra o no pueder ser leido");
-                return null;
+                throw new IOException("EL archivo no se encuentra o no pueder ser leido");
         }
         finally{
             if(this.aLectura!=null)
@@ -106,16 +164,16 @@ public class ArchivoCarrera {
         
     }
     
-    public boolean escribir(Competidor c){
+    @Override
+    public boolean escribir(Competidor c) throws IOException{
         PrintWriter escritor = null;
-        boolean error=false;
         try{
-            this.aEscritura = new FileWriter(this.archivo, true); // edicio
+            this.aEscritura = new FileWriter(this.archivo,true); // edicio
             escritor = new PrintWriter(this.aEscritura);
             escritor.println(c.getDatosFileText());
-            error = true;
+            return true;
         }catch(IOException ioe){
-            System.out.println("Error al abrir el archivo para escritura...");
+            throw new IOException("Error al abrir el archivo para escritura...");
            
         }
         finally{
@@ -123,13 +181,8 @@ public class ArchivoCarrera {
                 escritor.close();
             
             if(this.aEscritura!=null){
-                try{
-                    this.aEscritura.close();
-                }catch(IOException io){
-                    System.out.println(io);
-                }    
+                 this.aEscritura.close();
             }    
-            return error;
         }
     }
     
