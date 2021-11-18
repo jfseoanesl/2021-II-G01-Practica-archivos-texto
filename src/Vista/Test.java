@@ -6,8 +6,11 @@
 package Vista;
 
 import entidades.Competidor;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import modelo.RegistroClasificacion;
 
 /**
@@ -64,15 +67,19 @@ public class Test {
             System.out.println(ioe);
         }    
         
+        
     }
+    
     
     public static void imprimirCompetidor(Competidor c){
         
         System.out.printf("%-10s %-10s %-10s %-10d %.2f %n", c.getCc(), c.getNombrePiloto(), c.getEquipoPiloto(), 
                 c.getPosicioClasificacion(), c.getTiempoCarrera());
+        System.out.println("Pais: " + c.getPais().getNombre());
     }
     
     public static void imprimirLista(List<Competidor> lista){
+        System.err.printf("%-10s %-10s %-10s %-10s %s%n", "Cedula", "Nombre", "Equipo","Posicion", "Tiempo");
         for(Competidor c: lista){
             imprimirCompetidor(c);
         }

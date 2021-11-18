@@ -5,16 +5,19 @@
  */
 package entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author jairo
  */
-public class Competidor {
+public class Competidor implements Serializable {
     private String cc;
     private String nombrePiloto;
     private String equipoPiloto;
     private int posicioClasificacion;
     private double tiempoCarrera;
+    private Pais pais;
 
     public Competidor(String cc, String nombrePiloto, String equipoPiloto, int posicioClasificacion, double tiempoCarrera) {
         this.cc = cc;
@@ -22,9 +25,11 @@ public class Competidor {
         this.equipoPiloto = equipoPiloto;
         this.posicioClasificacion = posicioClasificacion;
         this.tiempoCarrera = tiempoCarrera;
+        this.pais = new Pais("Colombia");
     }
 
     public Competidor() {
+        this.pais = new Pais("Colombia");
     }
 
     /**
@@ -103,6 +108,13 @@ public class Competidor {
                this.equipoPiloto+";"+ 
                this.posicioClasificacion+";"+ 
                this.tiempoCarrera; 
+    }
+
+    /**
+     * @return the pais
+     */
+    public Pais getPais() {
+        return pais;
     }
     
 }

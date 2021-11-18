@@ -18,8 +18,9 @@ public class RegistroClasificacion {
     private IArchivo datos;
 
     public RegistroClasificacion() {
-        this.datos = new ArchivoCarreraTexto();
-        //this.datos = new ArchivoCarreraBin();
+        //this.datos = new ArchivoCarreraTexto();
+        this.datos = new ArchivoCarreraBin();
+        //this.datos = new ListCompetidores();
     }
 
     /**
